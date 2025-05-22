@@ -45,7 +45,6 @@ public class ExchangeUIController : MonoBehaviour
     public void SetExchangeTarget(AnimalType type, int count)
     {
         ClearErrorMessage();
-
         desiredAnimals.Clear();
         desiredAnimals[type] = count;
         targetValue = count * ExchangeRates.ToRabbitValue[type];
@@ -170,8 +169,11 @@ public class ExchangeUIController : MonoBehaviour
             currentCount = 1; 
         }
 
-        UpdateTarget();
-        
+        if (player != null)
+        {
+            UpdateTarget();
+        }
+
         if (countInputField != null && countInputField.text != currentCount.ToString())
         {
             countInputField.text = currentCount.ToString();
@@ -243,7 +245,6 @@ public class ExchangeUIController : MonoBehaviour
         desiredAnimals.Clear();
         UpdateSummary();
         UpdateAnimalTexts();
-
         ClearErrorMessage();
         HideExchangeUI();
     }
