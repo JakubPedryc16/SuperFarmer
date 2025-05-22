@@ -14,33 +14,34 @@ public class AnimalBreeder
     {
         Dictionary<AnimalType, int> additions = new Dictionary<AnimalType, int>();
         
-        Dictionary<AnimalType, int> totalAnimals = new Dictionary<AnimalType, int>(player.GetAllAnimals());
-  
-        if (!totalAnimals.ContainsKey(roll1)) totalAnimals[roll1] = 0;
-        if (!totalAnimals.ContainsKey(roll2)) totalAnimals[roll2] = 0;
+        Dictionary<AnimalType, int> rolledTypes = new Dictionary<AnimalType, int>();
+        rolledTypes[roll1] = rolledTypes.ContainsKey(roll1) ? rolledTypes[roll1] + 1 : 1;
+        rolledTypes[roll2] = rolledTypes.ContainsKey(roll2) ? rolledTypes[roll2] + 1 : 1;
 
-        totalAnimals[roll1]++;
-        totalAnimals[roll2]++;
-
-        foreach (var kvp in totalAnimals)
+        foreach (var kvp in rolledTypes)
         {
-            int pairs = kvp.Value / 2;
-            if (pairs > 0 && mainStock.ContainsKey(kvp.Key))
+            AnimalType type = kvp.Key;
+            int rolledAmount = kvp.Value;
+            int total = player.GetAnimalCount(type) + rolledAmount;
+
+            int pairs = total / 2;
+
+            if (pairs > 0 && mainStock.TryGetValue(type, out int available))
             {
-                int available = mainStock[kvp.Key];
                 int toAdd = Mathf.Min(pairs, available);
                 if (toAdd > 0)
                 {
-                    if (!additions.ContainsKey(kvp.Key)) additions[kvp.Key] = 0;
-                    additions[kvp.Key] += toAdd;
+                    additions[type] = toAdd;
                 }
             }
         }
-        
+
         foreach (var kvp in additions)
         {
             player.AddAnimal(kvp.Key, kvp.Value);
             mainStock[kvp.Key] -= kvp.Value;
         }
     }
+
+
 }
